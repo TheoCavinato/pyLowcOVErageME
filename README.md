@@ -1,5 +1,5 @@
 # pyLowcOVErageME
-Convert a VCF to a low coverage VCF with the same samples.
+Convert a VCF to a low coverage VCF with the same samples. We assume the distribution of the reads follow a poisson process.
 ## Quick start
 For instance, if you have a vcf and you want it to be 0.1x coverage you can run:\
 `python3 sim_low_cov.py --vcf your_vcf.vcf.gz --coverage 0.1` \
