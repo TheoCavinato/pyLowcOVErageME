@@ -14,8 +14,9 @@ Output a new VCF
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--vcf", required=True)
-parser.add_argument("--coverage", required=True, type=int)
+parser.add_argument("--coverage", required=True, type=float)
 parser.add_argument("--error", required=False, type=float, default=0.0001)
+parser.add_argument("--samples", required=False, nargs='+')
 args = parser.parse_args()
 
 #=====================
@@ -60,16 +61,33 @@ def simulate_DP_PL(GT, coverage, error):
 
     return GT_str + ':' + str(DP)+':'+PL
 
+def output_header(p_vcf_reader):
+    # Add PL and DP fields to the header
+    split_header = p_vcf_reader.header.__str__().split('\n')
+    format_checker = False
+    for line in split_header[:-2]:
+        if line[:8] == "##FORMAT":
+            format_checker=True
+        if line[:8] != "##FORMAT" and format_checker:
+            print('##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">')
+            print('##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for AA,AB,BB genotypes where A=ref and B=alt">')
+            format_checker=False
+        print(line)
+    last_line = split_header[-2].split('\t')[:9]
+    for sample in list(vcf_reader.header.samples):
+        last_line.append(sample)
+    print('\t'.join(last_line))
+
 #=====================
 # 1. Import the vcf
 #=====================
 
 vcf_path = args.vcf
 vcf_reader = VariantFile(vcf_path, 'r')
-samples = list(vcf_reader.header.samples)
+if args.samples:
+    vcf_reader.subset_samples(args.samples)
 
-# Output header
-print(vcf_reader.header.__str__()[:-1])
+output_header(vcf_reader)
 
 for rec in vcf_reader:
 
