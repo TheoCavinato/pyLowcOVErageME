@@ -73,6 +73,9 @@ def output_header(p_vcf_reader):
             print('##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for AA,AB,BB genotypes where A=ref and B=alt">')
             format_checker=False
         print(line)
+    if format_checker:
+            print('##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">')
+            print('##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for AA,AB,BB genotypes where A=ref and B=alt">')
     last_line = split_header[-2].split('\t')[:9]
     for sample in list(vcf_reader.header.samples):
         last_line.append(sample)
