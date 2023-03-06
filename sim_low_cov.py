@@ -27,7 +27,7 @@ def GL_to_PL(GLs):
     log_values = [-10*GL for GL in GLs]
     min_value = min(log_values)
     PLs = [str(int(round(log_value - min_value))) for log_value in log_values]
-    return ','.join(PLs)
+    return PLs
 
 def emission_probas(H1, H2, read_allele, error):
     if H1 == H2 == read_allele:
@@ -42,11 +42,10 @@ def simulate_DP_PL(GT, coverage, error):
     # Simulate a number of reads covering the position
     DP = numpy.random.poisson(coverage, 1)[0]
     if DP==0:
-        PL = "0,0,0"
+        PL = ('0', '0', '0')
         GT_str = "./."
 
     else:
-        GT_str = GT
         GT_int = [int(i) for i in GT.split('|')] if '|' in GT else [int(i) for i in GT.split('/')]
 
         H0_nbr = numpy.random.binomial(DP, 0.5) #X alleles for hap0
@@ -59,7 +58,13 @@ def simulate_DP_PL(GT, coverage, error):
 
         PL = GL_to_PL((p_D_00, p_D_01, p_D_11))
 
-    return GT_str + ':' + str(DP)+':'+PL
+        # Write the corresponding GT value
+        GT = PL.index('0')
+        if GT==0: GT_str="0/0"
+        elif GT==0: GT_str="0/1"
+        else: GT_str="1/1"
+
+    return GT_str + ':' + str(DP)+':'+','.join(PL)
 
 def output_header(p_vcf_reader):
     # Add PL and DP fields to the header
