@@ -61,7 +61,7 @@ def simulate_DP_PL(GT, coverage, error):
         # Write the corresponding GT value
         GT = PL.index('0')
         if GT==0: GT_str="0/0"
-        elif GT==0: GT_str="0/1"
+        elif GT==1: GT_str="0/1"
         else: GT_str="1/1"
 
     return GT_str + ':' + str(DP)+':'+','.join(PL)
