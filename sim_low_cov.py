@@ -46,7 +46,7 @@ def simulate_DP_PL(GT, coverage, error):
         GT_str = "./."
 
     else:
-        GT_int = [int(i) for i in GT.split('|')] if '|' in GT else [int(i) for i in GT.split('/')]
+        GT_int = [int(i.split(':')[0]) for i in GT.split('|')] if '|' in GT else [int(i.split(':')[0]) for i in GT.split('/')]
 
         H0_nbr = numpy.random.binomial(DP, 0.5) #X alleles for hap0
         H1_nbr = DP - H0_nbr #DP - X alleles for hap1
@@ -100,6 +100,7 @@ output_header(vcf_reader)
 for rec in vcf_reader:
 
     split_rec = rec.__str__().split()
+    split_rec[5:8] = ['.','.','.']
     split_rec[8]='GT:DP:PL'
     for n, sample_GT in enumerate(split_rec[9:]):
 
